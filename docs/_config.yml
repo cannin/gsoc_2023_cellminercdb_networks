@@ -1,5 +1,5 @@
 theme: jekyll-theme-minimal
-title: GNN Based Drug Response Prediction GSoC 2022
+title: A RShiny Module for Network Analysis in CellMinerCDB|GSoC 2023
 collections:
   reports:
     output: true
