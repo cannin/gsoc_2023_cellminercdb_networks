@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Week Two | "
+title:  "Week Two | More Enhancements to the module"
 tags: gsoc
 author: Siddharth Chaudhary
 ---
