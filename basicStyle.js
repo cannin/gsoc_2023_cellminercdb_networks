@@ -18,7 +18,7 @@
   },
   {"selector":"node[nodeType = 'COMPARTMENT']","css":{
     "shape":"barrel",
-    "border-width":"4px"
+    "border-width":"4px" 
   }
   },
   {"selector":"node[nodeType = 'COMPLEX']","css":{
@@ -29,11 +29,9 @@
        "background-color": "mapData(avgValues, -0.1, 0, red, white)"
   }},
   {"selector":"node[avgValues > 0]", "css": {
-       "background-color": "mapData(avgValues,0,0.1, white, blue)"
+       "background-color": "mapData(avgValues, 0, 0.1, white, blue)"
   }},
-  
-  
-  
+
   {"selector": "node:selected", "css": {
        "overlay-opacity": 0.3,
        "overlay-color": "gray"

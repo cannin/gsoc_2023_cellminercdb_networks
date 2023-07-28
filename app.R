@@ -114,8 +114,8 @@ server = function(input, output, session)
   
   displayGraph<- function(averageValues,minVal,maxVal){
     
-  minSet<- rep(minVal,times=length(averageValues))
-  maxSet<- rep(maxVal,times=length(averageValues))  
+    minSet<- rep(minVal,times=length(averageValues))
+    maxSet<- rep(maxVal,times=length(averageValues))  
   
     forNodes<- df_list[[input$selectPathway]][[1]]
     forEdges<- df_list[[input$selectPathway]][[2]]
@@ -133,7 +133,6 @@ server = function(input, output, session)
                             stringsAsFactors=FALSE)
     
     #family: e0e0ff, compartment: ffe0e0, complex: white
-
     
     tbl.edges <- data.frame(source=forEdges[["Source"]],
                             target=forEdges[["Target"]],
