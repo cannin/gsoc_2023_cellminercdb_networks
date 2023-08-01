@@ -1,7 +1,9 @@
 .Rproj.user
-CCLE-Data/
 .RData
 .RDataTmp
 .Rhistory
 srcContent.rds
 rsconnect/
+*.csv
+*.rds
+CCLe-Data

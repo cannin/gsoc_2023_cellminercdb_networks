@@ -2,11 +2,8 @@
   {"selector":"node", "css": {
     "border-width": "2px",
     "content": "data(name)",
-    "background-color":"grey"
-  }},
-  {"selector":"node[compound]","css":{
-    "border-color":"black",
-    "background-color":"white"
+    "background-color":"white",
+    "border-color":"black"
   }},
   {"selector":"node[nodeType = 'FAMILY']","css":{
     "shape":"rectangle"
@@ -23,13 +20,17 @@
   },
   {"selector":"node[nodeType = 'COMPLEX']","css":{
     "shape":"cut-rectangle"
-  }
-  },
-  {"selector":"node[avgValues <= 0]", "css": {
-       "background-color": "mapData(avgValues, -0.1, 0, red, white)"
   }},
+  // Every node background color
+   {"selector":"node[avgValues = 'NA']", "css": {
+       "background-color": "grey"
+  }},
+  {"selector":"node[avgValues <= 0]", "css": {
+       "background-color": "mapData(avgValues, -10, 0, red, white)"
+  }},
+  
   {"selector":"node[avgValues > 0]", "css": {
-       "background-color": "mapData(avgValues,0,0.1, white, blue)"
+       "background-color": "mapData(avgValues,0,10, white, blue)"
   }},
   
   
@@ -39,6 +40,8 @@
        "overlay-color": "gray"
   }},
   
+  
+  // Edge Interactions 
   {"selector":"edge","css":{
     "curve-style":"bezier"
     
