@@ -5,8 +5,8 @@ library(DT)
 
 df_list<- readRDS("demoDfList.rds")
 
-#srcContent<- readRDS("srcContent.rds")
-#allNodeNames<- readRDS("NodeNames.rds")
+srcContent<- readRDS("srcContent.rds")
+allNodeNames<- readRDS("NodeNames.rds")
 #data<-srcContent[["nci60"]][["molPharmData"]][["exp"]] 
 
 #data<- readRDS("GeneTempData.rds")
@@ -131,6 +131,7 @@ server = function(input, output, session)
   
   displayGraph<- function(averageValues,minVal,maxVal){
     df_list<-reactiveDfList()
+
     forNodes<- df_list[[input$selectPathway]][[1]]
     forEdges<- df_list[[input$selectPathway]][[2]]
     namesOfNodes <- forNodes[["NodeName"]]
@@ -152,7 +153,6 @@ server = function(input, output, session)
                             stringsAsFactors=FALSE)
     
     #family: e0e0ff, compartment: ffe0e0, complex: white
-
     
     tbl.edges <- data.frame(source=forEdges[["Source"]],
                             target=forEdges[["Target"]],
