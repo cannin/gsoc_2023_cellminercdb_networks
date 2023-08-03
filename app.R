@@ -3,11 +3,11 @@ library(later)
 library(shinyjs)
 library(DT)
 
-df_list<- readRDS("demoDfList.rds")
+pathwaysList <- readRDS("demoDfList.rds")
 
-srcContent<- readRDS("srcContent.rds")
-allNodeNames<- readRDS("NodeNames.rds")
-#data<-srcContent[["nci60"]][["molPharmData"]][["exp"]] 
+srcContent <- readRDS("srcContent.rds")
+allNodeNames <- readRDS("NodeNames.rds")
+#data<-srcContent[["nci60"]][["molPharmData"]][["exp"]]
 
 #data<- readRDS("GeneTempData.rds")
 
@@ -47,11 +47,8 @@ ui = shinyUI(fluidPage(
       
       selectInput("selectNode", "Select Node by ID:", choices = c("")),
     
-      textOutput("status"),
       actionButton("fit", "Fit Graph"),
       actionButton("fitSelected", "Fit Selected"),
-      #actionButton("getSelectedNodes", "Get Selected Nodes"), HTML("<br><br>"),
-      #htmlOutput("selectedNodesDisplay"),
       dataTableOutput("table"),
       width=3
     ),
@@ -68,7 +65,7 @@ server = function(input, output, session)
   
   reactiveData<-reactiveVal()
   reactiveAverage<- reactiveVal()
-  reactiveDfList<-reactiveVal(df_list)
+  reactiveDfList<-reactiveVal(pathwaysList)
   
   output$fileInputUI <- renderUI({
     if (input$selectPathwayType == "Upload Pathway") {
@@ -95,12 +92,12 @@ server = function(input, output, session)
     if(input$selectGene != ""){
       show("selectPathway")
       gene<- input$selectGene
-      df_list<-reactiveDfList()
-      extrapathwayNames <- names(df_list)[grep(input$selectGene, names(df_list))]
+      pathwaysList<-reactiveDfList()
+      extrapathwayNames <- names(pathwaysList)[grep(input$selectGene, names(pathwaysList))]
       pathwayChoices <- extrapathwayNames
         
-      for (pathway_name in names(df_list)) {
-        pathway <- df_list[[pathway_name]][[1]]
+      for (pathway_name in names(pathwaysList)) {
+        pathway <- pathwaysList[[pathway_name]][[1]]
         genes <- pathway[["NodeName"]]
         if (gene %in% genes) {
           pathwayChoices <- c(pathwayChoices, pathway_name)
@@ -119,9 +116,9 @@ server = function(input, output, session)
     
     if(input$selectPathway!="" & input$selectPathway!="No Pathway exists"){
       show("options")
-      df_list<-reactiveDfList()
-      forNodes<- df_list[[input$selectPathway]][[1]]
-      forEdges<- df_list[[input$selectPathway]][[2]]
+      pathwaysList<-reactiveDfList()
+      forNodes<- pathwaysList[[input$selectPathway]][[1]]
+      forEdges<- pathwaysList[[input$selectPathway]][[2]]
       namesOfNodes <- forNodes[["NodeName"]]
       
       updateSelectInput(session,"selectPathway",selected = input$selectPathway)
@@ -130,10 +127,10 @@ server = function(input, output, session)
   })
   
   displayGraph<- function(averageValues,minVal,maxVal){
-    df_list<-reactiveDfList()
+    pathwaysList<-reactiveDfList()
 
-    forNodes<- df_list[[input$selectPathway]][[1]]
-    forEdges<- df_list[[input$selectPathway]][[2]]
+    forNodes<- pathwaysList[[input$selectPathway]][[1]]
+    forEdges<- pathwaysList[[input$selectPathway]][[2]]
     namesOfNodes <- forNodes[["NodeName"]]
     if(minVal==0)minVal=-0.0001
     if(maxVal==0)maxVal=0.0001
@@ -142,7 +139,7 @@ server = function(input, output, session)
                                       averageValues * 10 / maxVal,
                                       averageValues * -10 / minVal ))
     
-    print(rescaledAverage)
+    #print(rescaledAverage)
     tbl.nodes <- data.frame(id=forNodes[["NodeID"]],
                             name=forNodes[["NodeName"]],
                             x=forNodes[["PosX"]],
@@ -174,8 +171,8 @@ server = function(input, output, session)
     cellLineData<-data[,selectedCells,drop=FALSE]
     
     #print(cellLineData)
-    df_list<-reactiveDfList()
-    namesOfNodes <- df_list[[input$selectPathway]][[1]][["NodeName"]]
+    pathwaysList<-reactiveDfList()
+    namesOfNodes <- pathwaysList[[input$selectPathway]][[1]][["NodeName"]]
     names <- as.list(row.names(data))
     tableValuesAverages<- c()
     tableValuesMedians<-c()
@@ -238,8 +235,8 @@ server = function(input, output, session)
     output$colorPlot<- renderPlot({
       par(mar = c(0, 0, 0, 0)) # Set all margins to 0
       plot(NULL, xaxt='n', yaxt='n', bty='n', ylab='', xlab='', xlim=0:1, ylim=0:1)
-      legend("center", legend =c(maxVal,'0.0', minVal),pt.cex=3, cex=1.5,bty='n',
-             fill = c('blue', 'white', 'red'), horiz=TRUE)
+      legend("center", legend =c(minVal,'0.0', maxVal),pt.cex=3, cex=1.5,bty='n',
+             fill = c('red', 'white', 'blue'), horiz=TRUE)
       
     })
   } 
@@ -337,45 +334,20 @@ server = function(input, output, session)
       edge_df_pathway <- data.frame(matrix(unlist(edgesfields), ncol = 8, byrow=TRUE))
       
       colnames(node_df_pathway) <- c("NodeName", "NodeID", "NodeType", "ParentId", "PosX", "PosY","Width","Height")
-      # Convert PosX and PosY columns to numeric data type: this was needed in later part
+      # Convert posX and posY columns to numeric data type: this was needed in later part
       node_df_pathway$PosX <- as.double(node_df_pathway$PosX)
       node_df_pathway$PosY <- as.double(node_df_pathway$PosY)
       
       
       colnames(edge_df_pathway) <- c("EdgeID", "Source", "Target", "EdgeType","Interaction","EdgeName","Bend","Curve")
-      df_list<-reactiveDfList()
+      pathwaysList<-reactiveDfList()
       fileName<-input$file$name 
-      df_list[[fileName]] <- list(node_df_pathway, edge_df_pathway)
-      reactiveDfList(df_list)
-      #print(fileName)
-      #print(df_list[[fileName]])
+      pathwaysList[[fileName]] <- list(node_df_pathway, edge_df_pathway)
+      reactiveDfList(pathwaysList)
       show("selectPathway")
       updateSelectInput(session,"selectPathway",choices=c(fileName),selected = fileName)
-      print(input$selectPathway)
       show("options")
       
-      # 
-      # tbl.nodes <- data.frame(id=node_df_pathway[["NodeID"]],
-      #                         x=node_df_pathway[["PosX"]],
-      #                         y=node_df_pathway[["PosY"]],
-      #                         name=node_df_pathway[["NodeName"]],
-      #                         parent=node_df_pathway[["ParentId"]],
-      #                         nodeType=node_df_pathway[["NodeType"]],
-      #                         stringsAsFactors=FALSE)
-      # 
-      # 
-      # 
-      # tbl.edges <- data.frame(source=edge_df_pathway[["Source"]],
-      #                         target=edge_df_pathway[["Target"]],
-      #                         interaction=edge_df_pathway[["EdgeType"]],
-      #                         stringsAsFactors=FALSE)
-      # 
-      # updateSelectInput(session,"selectNode",choices = c("",node_df_pathway[["NodeName"]]))
-      # removeGraph(session)
-      # graph.json <- dataFramesToJSON(tbl.edges, tbl.nodes)
-      # output$cyjShiny <- renderCyjShiny({
-      #   cyjShiny(graph=graph.json, layoutName="preset",styleFile ="basicStyle.js")
-      # })
 
     }
   })
@@ -383,7 +355,7 @@ server = function(input, output, session)
   
   #DONE
   observeEvent(input$selectNode,  ignoreInit=TRUE,{
-    forNodes<- df_list[[input$selectPathway]][[1]]
+    forNodes<- pathwaysList[[input$selectPathway]][[1]]
     selectedNodeID <- forNodes$NodeID[forNodes$NodeName == input$selectNode]
     selectNodes(session, selectedNodeID)
   })
